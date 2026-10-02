@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="{% url 'home' %}" class="brand">
+                <span class="brand-mark">M</span>
+                <span>Memelaba</span>
+            </a>
+            <nav class="nav-links">
+                <a href="{% url 'home' %}">Головна</a>
+                <a href="{% url 'login' %}">Увійти</a>
+                <a href="/admin/">Адмін</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-shell">
+        <div class="auth-card">
+            <span class="eyebrow">До зустрічі</span>
+            <h1>{{ title }}</h1>
+            <p>{{ message }}</p>
+            <div class="hero-actions">
+                <a href="{% url 'home' %}" class="button button-primary">На головну</a>
+                <a href="{% url 'login' %}" class="button button-ghost">Увійти знову</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

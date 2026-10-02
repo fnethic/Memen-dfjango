@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="{% url 'home' %}" class="brand">
+                <span class="brand-mark">M</span>
+                <span>Memelaba</span>
+            </a>
+
+            <nav class="nav-links">
+                <a class="active" href="{% url 'home' %}">Головна</a>
+                <a href="{% url 'profile' %}">Профіль</a>
+                <a href="{% url 'memes:hippo_meme' %}">Меми</a>
+                <a href="{% url 'memes:all_memes' %}">Всі меми</a>
+                <a href="{% url 'memes:create_meme' %}">Створити мем</a>
+            </nav>
+
+            <nav class="nav-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">{{ user.username }}</a>
+                    <a href="/admin/" class="button button-ghost">Адмін</a>
+                    <a href="{% url 'logout' %}">Вийти</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Увійти</a>
+                    <a href="{% url 'register' %}" class="button button-primary">Реєстрація</a>
+                    <a href="/admin/" class="button button-ghost">Адмін</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="hero-panel">
+            <div>
+                <span class="eyebrow">Сучасний мем-арсенал</span>
+                <h1>{{ title }}</h1>
+                <p>{{ message }}</p>
+                <div class="hero-actions">
+                    {% if user.is_authenticated %}
+                        <a class="button button-primary" href="{% url 'profile' %}">Мій профіль</a>
+                        <a class="button button-secondary" href="{% url 'memes:create_meme' %}">Створити мем</a>
+                    {% else %}
+                        <a class="button button-primary" href="{% url 'register' %}">Зареєструватися</a>
+                        <a class="button button-ghost" href="{% url 'login' %}">Увійти</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <span class="mini-tag">🔥 Trending</span>
+                    <h3>Тут сміх живе в стилі</h3>
+                    <ul class="feature-list">
+                        <li>Швидке створення мемів</li>
+                        <li>Реакції та коментарі</li>
+                        <li>Яскравий унікальний дизайн</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="label">Стиль</span>
+                <span class="value">Modern</span>
+            </article>
+            <article class="stat-card">
+                <span class="label">Команда</span>
+                <span class="value">Memelaba</span>
+            </article>
+            <article class="stat-card">
+                <span class="label">Статус</span>
+                <span class="value">Online</span>
+            </article>
+        </section>
+
+        <div class="fun-bar">
+            <div class="vibe-badge"><span id="meme-vibe-emoji">🔥</span> <span id="meme-vibe-text">Мем-енергія: максимум сміху</span></div>
+            <button type="button" class="random-meme-btn" onclick="changeVibe()">Змінити вайб</button>
+        </div>
+    </main>
+
+    <div class="floating-orb one"></div>
+    <div class="floating-orb two"></div>
+    <div class="floating-orb three"></div>
+
+    <script>
+        const vibes = [
+            ['🔥', 'Мем-енергія: максимум сміху'],
+            ['⚡', 'Початок: коду не було, а глузування вже є'],
+            ['😂', 'Вайб: шутки понад планку'],
+            ['🚀', 'День: швидкий, яскравий і без дедлайнів'],
+            ['🎉', 'Статус: мемний сезон відкрито'],
+            ['😎', 'Настрій: chill, але з гумором']
+        ];
+
+        function changeVibe() {
+            const item = vibes[Math.floor(Math.random() * vibes.length)];
+            document.getElementById('meme-vibe-emoji').textContent = item[0];
+            document.getElementById('meme-vibe-text').textContent = item[1];
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="{% url 'home' %}" class="brand">
+                <span class="brand-mark">M</span>
+                <span>Memelaba</span>
+            </a>
+            <nav class="nav-links">
+                <a href="{% url 'home' %}">Головна</a>
+                <a href="{% url 'memes:hippo_meme' %}">Меми</a>
+                <a href="{% url 'register' %}">Реєстрація</a>
+                <a href="/admin/">Адмін</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-shell">
+        <div class="auth-card">
+            <span class="eyebrow">Ласкаво просимо</span>
+            <h1>{{ title }}</h1>
+
+            <form method="post" class="styled-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Увійти</button>
+            </form>
+
+            {% if form.errors %}
+                <div class="error-box">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <a href="{% url 'home' %}" class="text-link">← На головну</a>
+        </div>
+    </main>
+</body>
+</html>

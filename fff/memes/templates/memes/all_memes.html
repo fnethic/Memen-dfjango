@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Всі меми</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="{% url 'home' %}" class="brand">
+                <span class="brand-mark">M</span>
+                <span>Memelaba</span>
+            </a>
+            <nav class="nav-links">
+                <a href="{% url 'home' %}">Головна</a>
+                <a href="{% url 'profile' %}">Профіль</a>
+                <a href="{% url 'memes:hippo_meme' %}">Меми</a>
+                <a class="active" href="{% url 'memes:all_memes' %}">Всі меми</a>
+                <a href="{% url 'memes:create_meme' %}">Створити мем</a>
+            </nav>
+            <nav class="nav-actions">
+                {% if user.is_authenticated %}
+                    <a href="/admin/" class="button button-ghost">Адмін</a>
+                    <a href="{% url 'logout' %}">Вийти</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Увійти</a>
+                    <a href="/admin/" class="button button-ghost">Адмін</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="page-header">
+            <div>
+                <span class="eyebrow">Галерея</span>
+                <h1>Всі меми</h1>
+            </div>
+            <p class="supporting">Гортай колекцію та залишай реакції.</p>
+        </div>
+
+        <div class="fun-bar">
+            <div class="vibe-badge"><span id="meme-vibe-emoji">🎲</span> <span id="meme-vibe-text">Мем-енергія: випадковий сміх</span></div>
+            <button type="button" class="random-meme-btn" id="random-meme-button">Показати випадковий мем</button>
+        </div>
+
+        {% if memes %}
+            <div class="meme-grid">
+                {% for meme in memes %}
+                    <article class="meme-card">
+                        <img class="meme-preview-image" src="{{ meme.image.url }}" alt="{{ meme.title }}">
+                        <div class="meme-body">
+                            <span class="meme-title">{{ meme.title }}</span>
+                            <div class="meta-row">
+                                <span>♥ {{ meme.likes.count }}</span>
+                                <span>Коментарі: {{ meme.comments.count }}</span>
+                            </div>
+
+                            <div class="comment-block">
+                                {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'memes:toggle_like' meme.id %}">
+                                        {% csrf_token %}
+                                        <button class="button button-primary" type="submit">♥ Подобається</button>
+                                    </form>
+
+                                    <form method="post" action="{% url 'memes:add_comment' meme.id %}" style="margin-top: 12px;">
+                                        {% csrf_token %}
+                                        {{ comment_form.text }}
+                                        <button type="submit" style="margin-top: 10px;">Залишити коментар</button>
+                                    </form>
+                                {% endif %}
+
+                                <ul class="comment-list">
+                                    {% for comment in meme.comments.all %}
+                                        <li><strong>{{ comment.user.username }}</strong>: {{ comment.text }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state">Мемів поки немає. Створи перший і поділися ним із усіма!</p>
+        {% endif %}
+    </main>
+
+    <div id="meme-modal" class="meme-modal" aria-label="Просмотр мема" aria-hidden="true">
+        <div class="meme-modal-panel">
+            <button type="button" class="close-modal" aria-label="Закрити">×</button>
+            <img src="" alt="Розгорнутий мем">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('meme-modal');
+            if (!modal) return;
+
+            const modalImage = modal.querySelector('img');
+            const closeButton = modal.querySelector('.close-modal');
+            const memeCards = Array.from(document.querySelectorAll('.meme-preview-image'));
+            const vibeEmojis = ['🎲', '🔥', '😂', '⚡', '😎', '🚀'];
+            const vibeTexts = [
+                'Мем-енергія: випадковий сміх',
+                'Мем-енергія: максимум хаосу',
+                'Мем-енергія: дуже дзен',
+                'Мем-енергія: берімо все серйозно',
+                'Мем-енергія: безмежний вайб'
+            ];
+
+            function updateVibe() {
+                const idx = Math.floor(Math.random() * vibeTexts.length);
+                document.getElementById('meme-vibe-emoji').textContent = vibeEmojis[idx];
+                document.getElementById('meme-vibe-text').textContent = vibeTexts[idx];
+            }
+
+            document.getElementById('random-meme-button').addEventListener('click', function () {
+                if (!memeCards.length) return;
+                const randomCard = memeCards[Math.floor(Math.random() * memeCards.length)];
+                randomCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                randomCard.style.outline = '3px solid rgba(52, 211, 153, 0.9)';
+                randomCard.style.outlineOffset = '6px';
+                setTimeout(function () {
+                    randomCard.style.outline = '';
+                    randomCard.style.outlineOffset = '';
+                }, 1200);
+                modalImage.src = randomCard.src;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+                updateVibe();
+            });
+
+            memeCards.forEach(function (image) {
+                image.addEventListener('click', function () {
+                    modalImage.src = image.src;
+                    modal.classList.add('open');
+                    modal.setAttribute('aria-hidden', 'false');
+                });
+            });
+
+            function closeModal() {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                modalImage.src = '';
+            }
+
+            closeButton.addEventListener('click', closeModal);
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && modal.classList.contains('open')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
