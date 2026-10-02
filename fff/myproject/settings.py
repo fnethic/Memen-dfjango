@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-y+5))%qctvxn7ibu)#iz*95w24pjc21r*%b#w@43k4empsjm2l
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "memes-django-project.onrender.com",
+    "memen-django-1.onrender.com",
     "localhost",
     "127.0.0.1",
 ]
