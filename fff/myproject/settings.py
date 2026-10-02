@@ -26,13 +26,10 @@ SECRET_KEY = 'django-insecure-y+5))%qctvxn7ibu)#iz*95w24pjc21r*%b#w@43k4empsjm2l
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-    'testserver',
-    '77.25.13.253',
+    "memes-django-project.onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
-
 
 # Application definition
 
